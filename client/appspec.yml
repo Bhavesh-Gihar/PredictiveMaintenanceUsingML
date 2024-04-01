@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source: /app/
+  - source: /client/app/
     destination: /home/app/Client
 permissions:
   - object: /
