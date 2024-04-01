@@ -1,4 +1,8 @@
 #!/bin/bash
-##### Start http service
+##### Start Service app
 
-sudo service httpd start
+cd /home/app/Client/
+#####      Creating a service call doorSensor
+sudo forever-service install client -r app
+##### start a service called doorSensor
+sudo service client start

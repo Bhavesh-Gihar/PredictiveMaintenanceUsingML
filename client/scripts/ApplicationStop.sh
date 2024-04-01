@@ -1,4 +1,4 @@
 #!/bin/bash
-# stop http service
+# Delete doorSensor service
 
-sudo service httpd stop
+sudo forever-service delete client
