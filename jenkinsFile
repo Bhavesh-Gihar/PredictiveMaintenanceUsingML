@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    
+    environment {
+        // SSH_KEY = credentials('ssh-key-id')
+        // EC2_INSTANCE_IP = 'your-ec2-instance-ip'
+        // REMOTE_DIR = '/path/to/remote/directory' 
+    }
+    
+    triggers {
+        pollSCM('H O * * *') 
+    }
+    
+    stages {
+        stage('Build') {
+            steps {
+                // Fetch code from GitHub
+                git 'https://github.com/your-username/your-repo.git'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                // Run tests to validate model
+                // sh 'pytest'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh "scp -i ${SSH_KEY} -r model_folder ec2-user@${EC2_INSTANCE_IP}:${REMOTE_DIR}"
+                sh "ssh -i ${SSH_KEY} ec2-user@${EC2_INSTANCE_IP} 'sudo systemctl restart model-service'"
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+        cleanup {
+            // Clean up resources (optional)
+            // sh 'rm -rf model_folder'
+        }
+    }
+}
