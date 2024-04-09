@@ -30,7 +30,9 @@ class deployer:
 
                 predictions.select("prediction").show()
 
-                return jsonify({"predictions": "hi"})
+                predictions_list = predictions.select("prediction").rdd.flatMap(lambda x: x).collect()
+
+                return jsonify({"predictions": predictions_list})
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
             
