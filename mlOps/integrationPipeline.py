@@ -1,8 +1,4 @@
-import sys
-import os
-sys.path.append(os.path.abspath('/pipeline'))
-
-import dataPipeline, trainPipeline, testPipeline
+from pipeline import dataPipeline, trainPipeline, testPipeline
 
 def ciPipeline():
     training_data, test_data = dataPipeline.run()
