@@ -2,66 +2,60 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_HOST = 'your-docker-host-ip'
-        DOCKER_REMOTE_DIR = '/path/to/remote/directory'
-        DOCKER_IMAGE_NAME = 'flask-ml-api'
-        DOCKER_CONTAINER_NAME = 'flask-ml-container'
-        FLASK_APP_PORT = '5000'
+        DOCKER_IMAGE_NAME = 'mlopsimg'
+        DOCKER_CONTAINER_NAME = 'mlopscontainer'
+        FLASK_APP_PORT = '8001'
     }
     
     triggers {
-        pollSCM('H 0 * * *') // Poll SCM once a day
+        pollSCM('*/5 * * * *') // Poll SCM every 5 minutes
     }
     
     stages {
-        stage('Build Data Pipeline') {
+        stage('Fetch Code') {
             steps {
                 // Fetch code from GitHub
-                git 'https://github.com/your-username/data-pipeline.git'
-                // Build data pipeline
+                git branch: 'main', url: 'https://github.com/Bhavesh-Gihar/PredictiveMaintenanceUsingML'
             }
         }
         
-        stage('Build Training Pipeline') {
+        stage('Integration Pipeline') {
             steps {
-                // Fetch code from GitHub
-                git 'https://github.com/your-username/training-pipeline.git'
-                // Build training pipeline
+                script {
+                    dir('mlOps') {
+                        // Execute training pipeline script to train the ML model
+                        def accuracy = sh(script: 'python pipeline/integrationPipeline.py', returnStdout: true).trim()
+                        
+                        // Store the model object in an environment variable
+                        env.accuracy = modelObject
+                    }
+                }
             }
         }
         
-        stage('Build Testing Pipeline') {
-            steps {
-                // Fetch code from GitHub
-                git 'https://github.com/your-username/testing-pipeline.git'
-                // Build testing pipeline
+        stage('Build Deployment') {
+            when {
+            // Condition to trigger deployment only if accuracy is above a certain threshold
+                expression { env.ACCURACY.toFloat() >= 0.8 }
             }
-        }
-        
-        stage('Build Deploying Pipeline') {
             steps {
-                // Fetch code from GitHub
-                git 'https://github.com/your-username/deploying-pipeline.git'
-                // Build deploying pipeline
-            }
-        }
-        
-        stage('Build Docker Image') {
-            steps {
-                // Fetch code from GitHub
-                git 'https://github.com/your-username/flask-server.git'
-                // Build Docker image
-                sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                dir('child_directory') {
+                    // Build Docker image
+                    sh "docker stop ${DOCKER_CONTAINER_NAME}"
+                    sh "docker rm ${DOCKER_CONTAINER_NAME}"
+                    sh "docker rmi ${DOCKER_IMAGE_NAME}"
+                    sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                }
             }
         }
         
         stage('Deploy') {
+            when {
+            // Condition to trigger deployment only if accuracy is above a certain threshold
+                expression { env.ACCURACY.toFloat() >= 0.8 }
+            }
             steps {
-                // Push Docker image to Docker host
-                sh "docker save ${DOCKER_IMAGE_NAME} | ssh -i ${SSH_KEY} ${DOCKER_HOST} 'docker load'"
-                
-                // Run Docker container
-                sh "ssh -i ${SSH_KEY} ${DOCKER_HOST} 'docker run -d --name ${DOCKER_CONTAINER_NAME} -p ${FLASK_APP_PORT}:5000 ${DOCKER_IMAGE_NAME}'"
+                sh "docker run -d -p 8001:8001 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
             }
         }
     }
@@ -72,10 +66,6 @@ pipeline {
         }
         failure {
             echo 'Deployment failed!'
-        }
-        cleanup {
-            // Clean up resources (optional)
-            // sh "ssh -i ${SSH_KEY} ${DOCKER_HOST} 'docker stop ${DOCKER_CONTAINER_NAME} && docker rm ${DOCKER_CONTAINER_NAME}'"
         }
     }
 }
