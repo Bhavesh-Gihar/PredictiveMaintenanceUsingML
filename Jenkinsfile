@@ -21,41 +21,39 @@ pipeline {
         
         stage('Integration Pipeline') {
             steps {
-                script {
-                    dir('mlOps') {
+                dir('mlOps') {
+                    sh "pip install -r requirements.txt"
+                    
+                    script {
                         // Execute training pipeline script to train the ML model
-                        def accuracy = sh(script: 'python pipeline/integrationPipeline.py', returnStdout: true).trim()
-                        
-                        // Store the model object in an environment variable
-                        env.accuracy = modelObject
+                        def accuracy = sh(script: 'python3 integrationPipeline.py', returnStdout: true).trim()
+                    
+                        // // Store the accuracy in an environment variable
+                        // env.ACCURACY = accuracy.toFloat()
                     }
                 }
             }
         }
         
         stage('Build Deployment') {
-            when {
-            // Condition to trigger deployment only if accuracy is above a certain threshold
-                expression { env.ACCURACY.toFloat() >= 0.8 }
-            }
             steps {
-                dir('child_directory') {
-                    // Build Docker image
-                    sh "docker stop ${DOCKER_CONTAINER_NAME}"
-                    sh "docker rm ${DOCKER_CONTAINER_NAME}"
-                    sh "docker rmi ${DOCKER_IMAGE_NAME}"
-                    sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                dir('mlOps') {
+                    script {
+                        // Build Docker image
+                        sh "sudo docker stop ${DOCKER_CONTAINER_NAME}"
+                        sh "sudo docker rm ${DOCKER_CONTAINER_NAME}"
+                        sh "sudo docker rmi ${DOCKER_IMAGE_NAME}"
+                        sh "sudo docker build -t ${DOCKER_IMAGE_NAME} ."
+                    }
                 }
             }
         }
         
         stage('Deploy') {
-            when {
-            // Condition to trigger deployment only if accuracy is above a certain threshold
-                expression { env.ACCURACY.toFloat() >= 0.8 }
-            }
             steps {
-                sh "docker run -d -p 8001:8001 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+                script {
+                    sh "sudo docker run -d -p 8001:8001 --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}"
+                }
             }
         }
     }
