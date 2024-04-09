@@ -1,4 +1,7 @@
-from stages import dataIngestion, dataCleaning, dataValidationSplit
+import sys
+sys.path.append('/mlOps/stages')
+
+import dataIngestion, dataCleaning, dataValidationSplit
 
 def run():
     data = dataIngestion.data("dataset/predictive_maintenance.csv")

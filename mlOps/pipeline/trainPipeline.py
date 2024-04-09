@@ -1,4 +1,7 @@
-from stages import training
+import sys
+sys.path.append('/mlOps/stages')
+
+import training
 
 def run(training_data):
     trainer = training.trainer()
