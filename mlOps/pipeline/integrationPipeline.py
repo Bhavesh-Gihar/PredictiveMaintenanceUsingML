@@ -1,4 +1,7 @@
-from pipeline import dataPipeline, trainPipeline, testPipeline
+import sys
+sys.path.append('/mlOps/pipeline')
+
+import dataPipeline, trainPipeline, testPipeline
 
 def ciPipeline():
     training_data, test_data = dataPipeline.run()
