@@ -3,8 +3,8 @@ import os
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-c_dir = os.path.join(current_dir, '..', 'stages')
-sys.path.append(c_dir)
+stages = os.path.join(current_dir, '..', 'stages')
+sys.path.append(stages)
 
 import dataIngestion, dataCleaning, dataValidationSplit
 

@@ -1,3 +1,6 @@
+import findspark
+findspark.init()
+
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 
 class tester:

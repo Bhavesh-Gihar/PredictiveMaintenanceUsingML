@@ -1,5 +1,10 @@
 import sys
-sys.path.append('/mlOps/stages')
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+stages = os.path.join(current_dir, '..', 'stages')
+sys.path.append(stages)
 
 import testing
 

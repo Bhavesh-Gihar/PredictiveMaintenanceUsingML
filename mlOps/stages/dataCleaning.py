@@ -1,3 +1,6 @@
+import findspark
+findspark.init()
+
 from pyspark.ml.feature import VectorAssembler
 
 class dataCleaner:

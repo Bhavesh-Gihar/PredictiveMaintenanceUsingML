@@ -1,3 +1,6 @@
+import findspark
+findspark.init()
+
 from pyspark import *
 from flask import Flask, request, jsonify
 from pyspark.sql import SparkSession
