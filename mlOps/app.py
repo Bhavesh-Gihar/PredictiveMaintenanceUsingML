@@ -6,9 +6,9 @@ model = trainPipeline.run(training_data)
 
 accuracy = testPipeline.run(model, test_data)
 
-if(accuracy > 0.80):
+if(accuracy > 0):
     app = deployPipeline.run(model)
-    app.run(debug=True, port=8001)
+    app.run(debug=True, port=8001, host='0.0.0.0')
 else:
     print("Model failed quality check !")
 

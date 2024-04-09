@@ -36,6 +36,7 @@ def predict():
         
         # # Convert predictions to a list
         # result = [row["prediction"] for row in predicted_data]
+        # print(response.text)
 
         return jsonify({"predictions": response.text})
     except Exception as e:

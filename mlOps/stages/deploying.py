@@ -14,7 +14,7 @@ class deployer:
 
         # Define a route
         @app.route('/predict', methods=['POST'])
-        def predict(model):
+        def predict():
             try:
                 # Get JSON data from the request
                 df_from_json = spark.read.json(spark.sparkContext.parallelize(request.json))

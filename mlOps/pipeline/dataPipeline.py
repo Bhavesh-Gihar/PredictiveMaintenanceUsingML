@@ -1,7 +1,7 @@
 from stages import dataIngestion, dataCleaning, dataValidationSplit
 
 def run():
-    data = dataIngestion.data("mlOps/dataset/predictive_maintenance.csv")
+    data = dataIngestion.data("dataset/predictive_maintenance.csv")
 
     dataCleaner = dataCleaning.dataCleaner()
     data.df = dataCleaner.clean(data.df)
