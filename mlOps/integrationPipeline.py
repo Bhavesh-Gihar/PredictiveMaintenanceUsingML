@@ -1,5 +1,5 @@
 import sys
-sys.path.append('mlOps/pipeline')
+sys.path.append('/mlOps/pipeline/')
 
 import dataPipeline, trainPipeline, testPipeline
 
