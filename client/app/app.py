@@ -4,7 +4,7 @@ import requests
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-with open('client/app/model.pkl', 'rb') as f:
+with open('/home/bhavesh/Documents/PredictiveMaintenanceUsingML/client/app/model.pkl', 'rb') as f:
     tinymlModel = pickle.load(f)
 
 # Input data
@@ -41,7 +41,7 @@ if(count > 1):
 
     json_string = json.dumps(input_data)
 
-    # Send a POST request with the random JSON object
+    # Send a POST request with the input
     response = requests.post(url, json=json_string)
 
     # Check the response

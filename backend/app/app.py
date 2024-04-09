@@ -1,5 +1,6 @@
 import json
 import requests
+import mysql.connector
 from flask import Flask, request, jsonify
 from pyspark.sql import SparkSession
 from pyspark.ml import PipelineModel
@@ -10,6 +11,24 @@ app = Flask(__name__)
 spark = SparkSession.builder \
     .appName("FlaskSparkIntegration") \
     .getOrCreate()
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="predictiveMaintenance",
+    auth_plugin="mysql_native_password",
+)
+
+# insert = [
+#     """insert into predictiveMaintenance values (1,'M14860','M',298.1,308.6,1551,42.8,0,0);"""
+# ]
+
+# cursor = db.cursor()
+# for i in insert:
+#     cursor.execute(i)
+
+# db.commit()
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -31,13 +50,25 @@ def predict():
         # Convert DataFrame to JSON string
         json_string = df.toJSON().collect()
 
-        # Send a POST reques
+        # Send a POST request
         response = requests.post(url, json=json_string)
+        responseData = json.loads(response.text)
+
+        print(responseData)
         
         # # Convert predictions to a list
         # result = [row["prediction"] for row in predicted_data]
         # print(response.text)
 
-        return jsonify({"predictions": response.text})
+        # return jsonify({"predictions": response.text})
+
+        cursor = db.cursor()
+        for idx, i in enumerate(data['data']):
+            insertQuery = f"""insert into predictiveMaintenance values ({i[0]},\'{i[1]}\',\'{i[2]}\',{i[3]},{i[4]},{i[5]},{i[6]},{i[7]},{responseData['predictions'][idx]});"""
+            print(insertQuery)
+            cursor.execute(insertQuery)
+        db.commit()
+
+        return jsonify({"Request": "Success"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
