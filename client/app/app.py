@@ -19,9 +19,9 @@ input_data = {
     # "Tool wear [min]": "0",
     # "Failure Type": "No Failure"
 
-    "data": [[1,"M14860","M",298.1,308.6,1551,42.8,0], 
+    "data": [[70,"L47341","L",298.9,309.0,1410,65.7,191], 
              [162,"L47341","L",298.3,308.1,1412,52.3,218], 
-             [169,"L47348","L",298.4,308.3,1433,62.3,20]]
+             [169,"L47341","L",298.4,308.3,1433,62.3,20]]
 }
 
 data_array = np.array(input_data['data'])
@@ -35,7 +35,7 @@ for i in predictions:
     if(i > 0.02):
         count = count + 1
 
-if(count > 1):
+if(count > len(predictions)/2):
     # URL of the Flask backend
     url = "http://127.0.0.1:5000/predict"
 
