@@ -15,9 +15,9 @@ RUN \
 
 # Install PySpark and Numpy
 RUN \
-    pip install --upgrade pip && \
-    pip install numpy && \
-    pip install pyspark
+    pip install --upgrade pip --break-system-packages && \
+    pip install numpy --break-system-packages && \
+    pip install pyspark --break-system-packages
 
 # Set the working directory in the container
 WORKDIR /mlops
@@ -26,7 +26,7 @@ WORKDIR /mlops
 COPY . /mlops
 
 # Install any dependencies needed for your Flask server
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --break-system-packages
 
 # Expose port 8001 for Flask server
 EXPOSE 8001

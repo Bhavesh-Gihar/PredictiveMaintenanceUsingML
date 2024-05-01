@@ -26,7 +26,7 @@ db = mysql.connector.connect(
 sns_client = boto3.client('sns', region_name='ap-south-1')
 
 # Specify the ARN of the SNS topic you want to publish to
-topic_arn = 'arn:aws:sns:ap-south-1:905418023525:faultNotification'
+topic_arn = 'arn:aws:sns:ap-south-1:905418023525:PredictiveMaintenanceUsingMLsns'
 
 # insert = [
 #     """insert into predictiveMaintenance values (1,'M14860','M',298.1,308.6,1551,42.8,0,0);"""
